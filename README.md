@@ -2,8 +2,11 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://python.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg)](https://typescriptlang.org)
+[![Go](https://img.shields.io/badge/Go-1.21+-00ADD8.svg)](https://golang.org)
+[![.NET](https://img.shields.io/badge/.NET-8.0+-512BD4.svg)](https://dotnet.microsoft.com)
 
-Alpaca Markets Trading ve Market Data API'leri için kapsamlı Python client kütüphanesi.
+Alpaca Markets Trading ve Market Data API'leri için çoklu dil desteğine sahip client kütüphanesi.
 
 ## 🎯 Ne İşe Yarar?
 
@@ -25,31 +28,12 @@ Bu kütüphane ile Alpaca üzerinden programatik olarak trading yapabilirsiniz:
 
 ## 🚀 Hızlı Başlangıç
 
-### Kurulum
+### Python
 
 ```bash
-git clone https://github.com/eneshenderson/alpaca-API.git
-cd alpaca-API
+cd python
 pip install -r requirements.txt
 ```
-
-### Credential Ayarları
-
-```bash
-cp .env.example .env
-# .env dosyasını düzenle ve API key'lerini gir
-```
-
-`.env` dosyası:
-```env
-ALPACA_API_KEY=your_api_key_here
-ALPACA_API_SECRET=your_api_secret_here
-ALPACA_PAPER=true
-```
-
-> API key'lerinizi [Alpaca Dashboard](https://app.alpaca.markets)'dan alabilirsiniz.
-
-### Temel Kullanım
 
 ```python
 import os
@@ -58,11 +42,10 @@ from alpaca_client import AlpacaClient, TradingAPI, MarketDataAPI
 
 load_dotenv()
 
-# Client oluştur
 client = AlpacaClient(
     api_key=os.environ["ALPACA_API_KEY"],
     api_secret=os.environ["ALPACA_API_SECRET"],
-    paper=True  # Paper trading
+    paper=True
 )
 
 trading = TradingAPI(client)
@@ -78,124 +61,191 @@ print(f"AAPL: ${price}")
 
 # Order ver
 order = trading.buy("AAPL", qty=10)
-print(f"Order: {order.id} - {order.status}")
 ```
 
-### Streaming (Canlı Veri)
+### TypeScript
 
-```python
-import asyncio
-from alpaca_client.streaming import AlpacaStream, StreamType
+```bash
+cd typescript
+npm install
+```
 
-stream = AlpacaStream(API_KEY, API_SECRET, StreamType.IEX)
+```typescript
+import { AlpacaClient, TradingAPI, MarketDataAPI } from 'alpaca-api-client';
 
-@stream.on_trade
-async def handle_trade(data):
-    print(f"{data['S']}: ${data['p']}")
+const client = new AlpacaClient({
+  apiKey: process.env.ALPACA_API_KEY!,
+  apiSecret: process.env.ALPACA_API_SECRET!,
+  paper: true
+});
 
-async def main():
-    async with stream:
-        await stream.subscribe(trades=["AAPL", "MSFT"])
-        await stream.run()
+const trading = new TradingAPI(client);
+const marketData = new MarketDataAPI(client);
 
-asyncio.run(main())
+// Hesap bilgisi
+const account = await trading.getAccount();
+console.log(`Buying Power: $${account.buyingPower.toLocaleString()}`);
+
+// Fiyat sorgula
+const price = await marketData.getCurrentPrice('AAPL');
+console.log(`AAPL: $${price}`);
+
+// Order ver
+const order = await trading.buy('AAPL', 10);
+```
+
+### Go
+
+```bash
+cd go
+go mod download
+```
+
+```go
+package main
+
+import (
+    "fmt"
+    "os"
+    "github.com/eneshenderson/alpaca-API/go/alpaca"
+)
+
+func main() {
+    client := alpaca.NewClient(alpaca.ClientOptions{
+        APIKey:    os.Getenv("ALPACA_API_KEY"),
+        APISecret: os.Getenv("ALPACA_API_SECRET"),
+        Paper:     true,
+    })
+
+    trading := alpaca.NewTradingAPI(client)
+    marketData := alpaca.NewMarketDataAPI(client)
+
+    // Hesap bilgisi
+    account, _ := trading.GetAccount()
+    fmt.Printf("Buying Power: $%s\n", account.BuyingPower)
+
+    // Fiyat sorgula
+    price, _ := marketData.GetCurrentPrice("AAPL")
+    fmt.Printf("AAPL: $%.2f\n", price)
+
+    // Order ver
+    order, _ := trading.Buy("AAPL", 10)
+}
+```
+
+### C# (.NET)
+
+```bash
+cd csharp
+dotnet build
+```
+
+```csharp
+using Alpaca.Api;
+
+var client = new AlpacaClient(new AlpacaClientOptions
+{
+    ApiKey = Environment.GetEnvironmentVariable("ALPACA_API_KEY")!,
+    ApiSecret = Environment.GetEnvironmentVariable("ALPACA_API_SECRET")!,
+    Paper = true
+});
+
+var trading = new TradingApi(client);
+var marketData = new MarketDataApi(client);
+
+// Hesap bilgisi
+var account = await trading.GetAccountAsync();
+Console.WriteLine($"Buying Power: ${account.BuyingPower:N2}");
+
+// Fiyat sorgula
+var price = await marketData.GetCurrentPriceAsync("AAPL");
+Console.WriteLine($"AAPL: ${price}");
+
+// Order ver
+var order = await trading.BuyAsync("AAPL", 10);
 ```
 
 
 ## 📚 API Metodları
 
+Tüm dillerde aynı metodlar mevcuttur:
+
 ### Trading API
 
 | Metod | Açıklama |
 |-------|----------|
-| `get_account()` | Hesap bilgilerini getirir |
+| `getAccount()` | Hesap bilgilerini getirir |
 | `buy(symbol, qty)` | Market buy order |
 | `sell(symbol, qty)` | Market sell order |
-| `buy_limit(symbol, qty, price)` | Limit buy order |
-| `bracket_order(...)` | Entry + TP + SL order |
-| `get_orders()` | Tüm order'ları listeler |
-| `cancel_order(id)` | Order iptal eder |
-| `get_positions()` | Açık pozisyonları listeler |
-| `close_position(symbol)` | Pozisyon kapatır |
-| `get_clock()` | Market durumunu getirir |
+| `buyLimit(symbol, qty, price)` | Limit buy order |
+| `getOrders()` | Tüm order'ları listeler |
+| `cancelOrder(id)` | Order iptal eder |
+| `getPositions()` | Açık pozisyonları listeler |
+| `closePosition(symbol)` | Pozisyon kapatır |
+| `getClock()` | Market durumunu getirir |
+| `isMarketOpen()` | Market açık mı kontrol eder |
 
 ### Market Data API
 
 | Metod | Açıklama |
 |-------|----------|
-| `get_stock_bars(symbols, timeframe)` | Geçmiş OHLCV verileri |
-| `get_stock_snapshot(symbol)` | Anlık fiyat verisi |
-| `get_current_price(symbol)` | Güncel fiyat |
-| `get_crypto_bars(symbols, timeframe)` | Crypto OHLCV verileri |
-| `get_options_contracts(...)` | Opsiyon kontratları |
+| `getStockBars(symbols, timeframe)` | Geçmiş OHLCV verileri |
+| `getStockSnapshot(symbol)` | Anlık fiyat verisi |
+| `getCurrentPrice(symbol)` | Güncel fiyat |
+| `getCryptoBars(symbols, timeframe)` | Crypto OHLCV verileri |
+| `getOptionsContracts(...)` | Opsiyon kontratları |
 
-### Streaming API
+### Streaming API (Python & TypeScript)
 
 | Metod | Açıklama |
 |-------|----------|
 | `subscribe(trades, quotes, bars)` | Veri akışına abone ol |
 | `unsubscribe(...)` | Aboneliği iptal et |
-| `on_trade` | Trade event handler |
-| `on_quote` | Quote event handler |
-| `on_bar` | Bar event handler |
+| `onTrade` | Trade event handler |
+| `onQuote` | Quote event handler |
+| `onBar` | Bar event handler |
 
 ## 🏗️ Proje Yapısı
 
 ```
 alpaca-API/
-├── alpaca_client/           # Ana modül
-│   ├── __init__.py          # Package exports
-│   ├── client.py            # HTTP client (retry, rate limit)
-│   ├── trading.py           # Trading API
-│   ├── market_data.py       # Market Data API
-│   ├── broker.py            # Broker API (B2B)
-│   ├── streaming.py         # WebSocket streaming
-│   ├── models.py            # Dataclass models
-│   └── exceptions.py        # Custom exceptions
-├── tests/                   # Test dosyaları
-├── .env.example             # Credential template
-├── requirements.txt         # Dependencies
-├── example.py               # Kullanım örnekleri
-└── example_streaming.py     # Streaming örnekleri
+├── python/              # Python paketi
+│   ├── alpaca_client/   # Ana modül
+│   ├── tests/           # Test dosyaları
+│   └── requirements.txt
+├── typescript/          # TypeScript paketi
+│   ├── src/             # Kaynak kodlar
+│   └── package.json
+├── go/                  # Go modülü
+│   ├── alpaca/          # Ana paket
+│   └── go.mod
+├── csharp/              # .NET kütüphanesi
+│   └── *.cs
+├── .env.example         # Credential template
+├── LICENSE              # MIT Lisansı
+└── README.md
 ```
 
 ## ⚙️ Yapılandırma
+
+### Credential Ayarları
+
+1. `.env.example` dosyasını `.env` olarak kopyalayın
+2. [Alpaca Dashboard](https://app.alpaca.markets)'dan API key'lerinizi alın
+3. `.env` dosyasına key'lerinizi girin
+
+```env
+ALPACA_API_KEY=your_api_key_here
+ALPACA_API_SECRET=your_api_secret_here
+ALPACA_PAPER=true
+```
 
 ### Client Parametreleri
 
 | Parametre | Varsayılan | Açıklama |
 |-----------|------------|----------|
-| `paper` | `True` | Paper trading modu |
-| `timeout` | `30` | Request timeout (saniye) |
-| `max_retries` | `3` | Retry sayısı |
-
-### Streaming Parametreleri
-
-| Parametre | Varsayılan | Açıklama |
-|-----------|------------|----------|
-| `auto_reconnect` | `True` | Otomatik yeniden bağlanma |
-| `reconnect_attempts` | `10` | Max reconnect denemesi |
-
-## 🛡️ Error Handling
-
-```python
-from alpaca_client import (
-    AlpacaError,
-    AuthenticationError,
-    RateLimitError,
-    NotFoundError,
-    ValidationError
-)
-
-try:
-    order = trading.buy("AAPL", qty=1000000)
-except ValidationError as e:
-    print(f"Geçersiz order: {e}")
-except RateLimitError as e:
-    print(f"Rate limit, {e.retry_after}s bekle")
-except AlpacaError as e:
-    print(f"API hatası: {e}")
-```
+| `paper` | `true` | Paper trading modu |
+| `timeout` | `30s` | Request timeout |
 
 ## 🔗 Linkler
 
