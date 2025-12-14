@@ -9,6 +9,13 @@ Java client for Alpaca Trading and Market Data APIs.
 
 ## Installation
 
+### With Gradle
+```bash
+cd java
+gradle build
+```
+
+### With Maven
 ```bash
 cd java
 mvn clean install
@@ -49,6 +56,12 @@ Order order = trading.submitOrder(OrderRequest.market("AAPL", "1", "buy"));
 
 ## Run Example
 
+### With Gradle
+```bash
+gradle run
+```
+
+### With Maven
 ```bash
 mvn exec:java
 ```
