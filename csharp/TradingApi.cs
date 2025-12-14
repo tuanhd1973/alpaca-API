@@ -12,7 +12,7 @@ public class TradingApi
     public async Task<decimal> GetBuyingPowerAsync()
     {
         var account = await GetAccountAsync();
-        return account.BuyingPower;
+        return account.BuyingPowerDecimal;
     }
 
     // Orders

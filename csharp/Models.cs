@@ -5,18 +5,23 @@ public record Account(
     string AccountNumber,
     string Status,
     string Currency,
-    decimal Cash,
-    decimal BuyingPower,
-    decimal PortfolioValue,
-    decimal Equity,
-    decimal LastEquity,
+    string Cash,
+    string BuyingPower,
+    string PortfolioValue,
+    string Equity,
+    string LastEquity,
     int DaytradeCount,
     bool PatternDayTrader,
     bool TradingBlocked,
     bool TransfersBlocked,
     bool AccountBlocked,
     DateTime CreatedAt
-);
+)
+{
+    public decimal CashDecimal => decimal.Parse(Cash);
+    public decimal BuyingPowerDecimal => decimal.Parse(BuyingPower);
+    public decimal EquityDecimal => decimal.Parse(Equity);
+};
 
 public record Order(
     string Id,
