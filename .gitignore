@@ -42,3 +42,17 @@ htmlcov/
 # OS
 .DS_Store
 Thumbs.db
+
+# Node.js
+node_modules/
+npm-debug.log*
+
+# Go
+go/bin/
+go/pkg/
+
+# C#
+bin/
+obj/
+*.user
+*.suo
