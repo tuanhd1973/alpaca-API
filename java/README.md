@@ -63,7 +63,7 @@ gradle run
 
 ### With Maven
 ```bash
-mvn exec:java
+mvn compile exec:java
 ```
 
 ## API Reference

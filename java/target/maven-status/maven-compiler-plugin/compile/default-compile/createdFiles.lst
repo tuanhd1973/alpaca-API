@@ -1,0 +1,15 @@
+com\alpaca\client\models\Quote.class
+com\alpaca\client\models\Snapshot.class
+com\alpaca\client\models\Clock.class
+com\alpaca\examples\Example.class
+com\alpaca\client\models\OrderRequest.class
+com\alpaca\client\models\Snapshot$SnapshotTrade.class
+com\alpaca\client\models\Account.class
+com\alpaca\client\models\Order.class
+com\alpaca\client\models\Snapshot$SnapshotQuote.class
+com\alpaca\client\AlpacaClient.class
+com\alpaca\client\TradingApi.class
+com\alpaca\client\models\Position.class
+com\alpaca\client\MarketDataApi.class
+com\alpaca\client\models\Snapshot$Bar.class
+com\alpaca\client\models\Trade.class
